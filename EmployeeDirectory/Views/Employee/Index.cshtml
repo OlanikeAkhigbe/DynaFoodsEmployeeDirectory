@@ -1,0 +1,25 @@
+﻿@model IEnumerable<EmployeeDirectory.Models.Employee>
+
+<h2>Employee Directory</h2>
+
+<p>This page displays employees from the ASP.NET Core MVC application.</p>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Employee ID</th>
+            <th>Name</th>
+            <th>Department</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var employee in Model)
+        {
+            <tr>
+                <td>@employee.Id</td>
+                <td>@employee.Name</td>
+                <td>@employee.Department</td>
+            </tr>
+        }
+    </tbody>
+</table>
