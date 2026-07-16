@@ -19,5 +19,5 @@ variable "container_app_name" {
 variable "container_image" {
   description = "Container image deployed to Azure Container Apps."
   type        = string
-  default     = "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
+  default     = "ghcr.io/olanikeakhigbe/dynafoods-employee-directory:latest"
 }
