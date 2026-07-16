@@ -1,0 +1,57 @@
+name: Build and Publish Employee Directory
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/dynafoods-employee-directory
+
+jobs:
+  build-test-publish:
+    name: Build, Test and Publish Container
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore EmployeeDirectory.sln
+
+      - name: Build application
+        run: dotnet build EmployeeDirectory.sln --configuration Release --no-restore
+
+      - name: Run automated tests
+        run: dotnet test EmployeeDirectory.sln --configuration Release --no-build
+
+      - name: Sign in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and publish Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./EmployeeDirectory
+          file: ./EmployeeDirectory/Dockerfile
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:latest
+            ${{ env.IMAGE_NAME }}:${{ github.sha }}
